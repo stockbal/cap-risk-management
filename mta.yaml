@@ -9,16 +9,23 @@ modules:
     path: gen/srv
     requires:
       - name: risk-management-auth
-      - name: risk-management-db
       - name: risk-management-destination-service
+      - name: risk-management-db
+      - name: risk-management-registry
     provides:
       - name: risk-management-srv-api
         properties:
           srv-url: ${default-url}
+      - name: mtx-api # potentially required by approuter
+        properties:
+          mtx-url: ${default-url}
     parameters:
       buildpack: nodejs_buildpack
     build-parameters:
       builder: npm-ci
+    properties:
+      SUBSCRIPTION_URL: ${protocol}://\${tenant_subdomain}-${default-uri}
+      SUBSCRIPTION_URL_REPLACEMENT_RULES: [["-srv", ""]]
 
   - name: risk-management-approuter
     type: approuter.nodejs
@@ -32,16 +39,17 @@ modules:
           forwardAuthToken: false
           name: ui5
           url: https://ui5.sap.com
+      - name: mtx-api
+        group: destinations
+        properties:
+          name: mtx-api # must be used in xs-app.json as well
+          url: ~{mtx-url}
     parameters:
       memory: 128M
-
-  - name: risk-management-db-deployer
-    type: hdb
-    path: gen/db
-    requires:
-      - name: risk-management-db
-    parameters:
-      buildpack: nodejs_buildpack
+      keep-existing-routes: true
+      disk-quota: 256M
+    properties:
+      TENANT_HOST_PATTERN: "^(.*)-${default-uri}"
 
   - name: risk-management-app-content
     type: com.sap.application.content
@@ -115,18 +123,15 @@ resources:
       path: ./xs-security.json
       service: xsuaa
       service-plan: application
+      config:
+        xsappname: risk-management-${org}-${space}
+        tenant-mode: shared
 
   - name: risk-management-app-runtime
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
       service-plan: app-runtime
-
-  - name: risk-management-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
 
   - name: risk-management-repo-host
     type: org.cloudfoundry.managed-service
@@ -152,6 +157,32 @@ resources:
       service: destination
       service-name: risk-management-destination-service
       service-plan: lite
+
+  - name: risk-management-db
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: service-manager
+      service-plan: container
+
+  - name: risk-management-registry
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: mtx-api
+    parameters:
+      service: saas-registry
+      service-plan: application
+      config:
+        xsappname: risk-management-${org}-${space}
+        appName: risk-management-${org}-${space}
+        displayName: risk-management
+        description: A simple CAP project.
+        category: "Category"
+        appUrls:
+          getDependencies: ~{mtx-api/mtx-url}/mtx/v1/provisioning/dependencies
+          onSubscription: ~{mtx-api/mtx-url}/mtx/v1/provisioning/tenant/{tenantId}
+          onSubscriptionAsync: false
+          onUnSubscriptionAsync: false
+          callbackTimeoutMillis: 300000
 
 parameters:
   deploy_mode: html5-repo

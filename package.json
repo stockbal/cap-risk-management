@@ -7,6 +7,7 @@
   "private": true,
   "dependencies": {
     "@sap/cds": "^5",
+    "@sap/cds-mtx": "^2",
     "@sap/xssec": "^3",
     "express": "^4",
     "hdb": "^0.19.0",
@@ -21,7 +22,8 @@
     "watch": "cds watch",
     "build": "npx -p mbt mbt build",
     "watch-risks": "cds watch --open risks/webapp/index.html?sap-ui-xx-viewCache=false#fe-lrop-v4",
-    "undeploy": "cf undeploy risk-management --delete-services --delete-service-keys"
+    "undeploy": "cf undeploy risk-management --delete-services --delete-service-keys",
+    "make-mt": "cds add mtx --for production"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -69,18 +71,27 @@
       },
       "[production]": {
         "db": {
-          "kind": "hana-cloud"
+          "kind": "hana-mt"
         },
         "auth": {
           "kind": "xsuaa"
         },
         "approuter": {
           "kind": "cloudfoundry"
-        }
+        },
+        "multitenancy": true
       },
       "auth": {
         "kind": "xsuaa"
+      },
+      "db": {
+        "kind": "sql"
       }
+    },
+    "mtx": {
+      "element-prefix": "Z_",
+      "namespace-blocklist": [],
+      "extension-allowlist": []
     }
   }
 }
