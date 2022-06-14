@@ -33,7 +33,7 @@
       "role-template-references": ["$XSAPPNAME.RiskManager"]
     },
     {
-      "name": "RiskViewer-${org}-${space}",
+      "name": "RiskViewer",
       "description": "View Risks",
       "role-template-references": ["$XSAPPNAME.RiskViewer"]
     }
