@@ -6,6 +6,7 @@
 
 - create new folder `risk-management`
 - run `cds init` inside this folder
+- run `cds add mta` (**Note**: should be done early so UI generator can insert section into `mta` file)
 - create new file `db/schema.cds`
 - insert snippet from "Task 2: Add a Data Model to the project"
 - create new file `srv/risk-service.cds`
@@ -20,6 +21,7 @@
 ### Generating a User Interface
 
 - create fiori list report from "Task 1: Generate the UI With an SAP Fiori Elements Template"
+  - set option to adjust mta file
 - create new file `app/common.cds` and fill in the code snippet from "Task 2: Modify the UI With OData Annotations
 - adjust file `app/services.cds` with snippet from same task
 - adjust file `app/risks/annotations.cds` with snippet from same task
@@ -51,3 +53,27 @@ apikey=<api key from api hub>
 - adjust file `app/common.cds` with changes from snippet at **1b** from "Task 4: Add the Business Partner Field to the UI"
 - adjust file `app/risks/annotations.cds` with snippet at **1c**
 - adjust file `srv/risk-service.js` with snippet at **1f**
+
+## Manual Deployment
+
+### Performing Manual Deployment
+
+- add hana to project with `cds add hana --for production`
+- add uaa to project with `cds add xsuaa --for production`
+- add destination to business partner api to subaccount destination
+- create approuter with `cds add approuter`
+- create new folder `approuter`
+- move files `package.json`, `xs-app.json` from `app` to folder `approuter`
+- delete file `default-env.json` in folder `app`
+
+## Authorization and Trust Management
+
+### Defining CDS Restrictions and Roles
+
+- adjust file `srv/risk-service.cds` with restrictions from "Task 2: Add CAP Role Restrictions to Entities", snippet **1b**
+- adjust file `.cdsrc.json` from "Task 3: Add Users for Local Testing", snippet **1b**
+
+### Setting Up SAP Authorization and Trust Management
+
+- run `cds compile srv --to xsuaa > xs-security.json` to generate scopes and role templates in file `xs-security.json`
+- add role collections to `xs-security.json` file
