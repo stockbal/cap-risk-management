@@ -1,0 +1,12 @@
+{
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "/service/(.*)",
+      "target": "/service/$1",
+      "destination": "risk-management-srv-api",
+      "authenticationType": "xsuaa"
+    }
+  ],
+  "welcomeFile": "/riskmanagementrisks"
+}
