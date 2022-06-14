@@ -10,6 +10,7 @@ modules:
     requires:
       - name: risk-management-auth
       - name: risk-management-db
+      - name: risk-management-destination-service
     provides:
       - name: risk-management-srv-api
         properties:
@@ -88,6 +89,8 @@ modules:
         instance:
           existing_destinations_policy: update
           destinations:
+            # This destination is needed so that the UI5 applications in the repo host are discoverable for the
+            # managed application router
             - Name: risk-management-repo-host
               ServiceInstanceName: risk-management-repo-host
               ServiceKeyName: risk-management-repo-host-key
@@ -109,9 +112,6 @@ resources:
   - name: risk-management-auth
     type: org.cloudfoundry.managed-service
     parameters:
-      config:
-        tenant-mode: dedicated
-        xsappname: risk-management-${org}-${space}
       path: ./xs-security.json
       service: xsuaa
       service-plan: application
@@ -132,7 +132,6 @@ resources:
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
-      service-name: risk-management-html5-srv
       service-plan: app-host
 
   - name: risk-management-destination-service
