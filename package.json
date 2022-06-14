@@ -7,7 +7,10 @@
   "private": true,
   "dependencies": {
     "@sap/cds": "^5",
-    "express": "^4"
+    "@sap/xssec": "^3",
+    "express": "^4",
+    "hdb": "^0.19.0",
+    "passport": "^0"
   },
   "devDependencies": {
     "@sap/ux-specification": "^1.100.4",
@@ -16,7 +19,9 @@
   "scripts": {
     "start": "cds run",
     "watch": "cds watch",
-    "watch-risks": "cds watch --open risks/webapp/index.html?sap-ui-xx-viewCache=false#fe-lrop-v4"
+    "build": "npx -p mbt mbt build",
+    "watch-risks": "cds watch --open risks/webapp/index.html?sap-ui-xx-viewCache=false#fe-lrop-v4",
+    "undeploy": "cf undeploy risk-management --delete-services --delete-service-keys"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -51,9 +56,30 @@
       "API_BUSINESS_PARTNER": {
         "kind": "odata",
         "model": "srv/external/API_BUSINESS_PARTNER",
-        "credentials": {
-          "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER/"
+        "[development]": {
+          "credentials": {
+            "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER/"
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "API_BUSINESS_PARTNER"
+          }
         }
+      },
+      "[production]": {
+        "db": {
+          "kind": "hana-cloud"
+        },
+        "auth": {
+          "kind": "xsuaa"
+        },
+        "approuter": {
+          "kind": "cloudfoundry"
+        }
+      },
+      "auth": {
+        "kind": "xsuaa"
       }
     }
   }

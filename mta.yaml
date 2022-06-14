@@ -1,0 +1,165 @@
+_schema-version: "3.1"
+ID: risk-management
+description: A simple CAP project.
+version: 1.0.0
+
+modules:
+  - name: risk-management-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: risk-management-auth
+      - name: risk-management-db
+    provides:
+      - name: risk-management-srv-api
+        properties:
+          srv-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+
+  - name: risk-management-approuter
+    type: approuter.nodejs
+    path: approuter/
+    requires:
+      - name: risk-management-auth
+      - name: risk-management-app-runtime
+      - name: risk-management-destination-service
+        group: destinations
+        properties:
+          forwardAuthToken: false
+          name: ui5
+          url: https://ui5.sap.com
+    parameters:
+      memory: 128M
+
+  - name: risk-management-db-deployer
+    type: hdb
+    path: gen/db
+    requires:
+      - name: risk-management-db
+    parameters:
+      buildpack: nodejs_buildpack
+
+  - name: risk-management-app-content
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: risk-management-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - riskmanagementrisks.zip
+          name: riskmanagementrisks
+          target-path: resources/
+
+  - name: riskmanagementrisks
+    type: html5
+    path: app/risks
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+
+  - name: risk-management-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: risk-management-destination-service
+        parameters:
+          content-target: true
+      - name: risk-management-repo-host
+        parameters:
+          service-key:
+            name: risk-management-repo-host-key
+      - name: risk-management-auth
+        parameters:
+          service-key:
+            name: risk-management-auth-key
+      - name: risk-management-srv-api
+    parameters:
+      content:
+        instance:
+          existing_destinations_policy: update
+          destinations:
+            - Name: risk-management-repo-host
+              ServiceInstanceName: risk-management-repo-host
+              ServiceKeyName: risk-management-repo-host-key
+              sap.cloud.service: riskmanagement
+            - Name: risk-management-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: risk-management-auth
+              ServiceKeyName: risk-management-auth-key
+              sap.cloud.service: riskmanagement
+            - Name: risk-management-srv-api
+              Authentication: OAuth2UserTokenExchange
+              TokenServiceInstanceName: risk-management-auth
+              TokenServiceKeyName: risk-management-auth-key
+              URL: ~{risk-management-srv-api/srv-url}
+    build-parameters:
+      no-source: true
+
+resources:
+  - name: risk-management-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        tenant-mode: dedicated
+        xsappname: risk-management-${org}-${space}
+      path: ./xs-security.json
+      service: xsuaa
+      service-plan: application
+
+  - name: risk-management-app-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+
+  - name: risk-management-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+  - name: risk-management-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: risk-management-html5-srv
+      service-plan: app-host
+
+  - name: risk-management-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      service-name: risk-management-destination-service
+      service-plan: lite
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx -p @sap/cds-dk cds build --production

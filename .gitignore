@@ -25,6 +25,10 @@ mta_archives/
 *.orig
 *.log
 
+# UI5
+dist
+resources
+
 *.iml
 *.flattened-pom.xml
 
