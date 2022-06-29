@@ -27,7 +27,7 @@ modules:
       SUBSCRIPTION_URL: ${protocol}://\${tenant_subdomain}-${default-uri}
       SUBSCRIPTION_URL_REPLACEMENT_RULES: [["-srv", ""]]
 
-  - name: risk-management-approuter
+  - name: risk-management
     type: approuter.nodejs
     path: approuter/
     requires:
