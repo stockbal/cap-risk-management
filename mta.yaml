@@ -25,6 +25,7 @@ modules:
     path: approuter/
     requires:
       - name: risk-management-auth
+      - name: risk-management-theming
       - name: risk-management-app-runtime
       - name: risk-management-destination-service
         group: destinations
@@ -152,6 +153,12 @@ resources:
       service: destination
       service-name: risk-management-destination-service
       service-plan: lite
+
+  - name: risk-management-theming
+    parameters:
+      service: theming
+      service-plan: standard
+    type: org.cloudfoundry.managed-service
 
 parameters:
   deploy_mode: html5-repo

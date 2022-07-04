@@ -6,6 +6,12 @@
       "target": "/service/$1",
       "destination": "risk-management-srv-api",
       "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^/themes/(.*)$",
+      "target": "$1",
+      "service": "com.sap.ui.theming",
+      "endpoint": "runtime"
     }
   ],
   "welcomeFile": "/riskmanagementrisks"
