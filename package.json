@@ -19,9 +19,10 @@
   "scripts": {
     "start": "cds run",
     "watch": "cds watch",
-    "build": "npx -p mbt mbt build",
+    "build": "npx -p mbt mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
     "watch-risks": "cds watch --open risks/webapp/index.html?sap-ui-xx-viewCache=false#fe-lrop-v4",
-    "undeploy": "cf undeploy risk-management --delete-services --delete-service-keys"
+    "undeploy": "cf undeploy risk-management --delete-services --delete-service-keys --delete-service-brokers"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
