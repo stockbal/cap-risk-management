@@ -1,79 +1,37 @@
-# Getting Started
+# Providing service broker for API service
 
-## Development Environment and CAP-Project
+## Deployment
 
-### Creating a CAP-Based Service
+### Generate Broker Credentials
 
-- create new folder `risk-management`
-- run `cds init` inside this folder
-- run `cds add mta` (**Note**: should be done early so UI generator can insert section into `mta` file)
-- create new file `db/schema.cds`
-- insert snippet from "Task 2: Add a Data Model to the project"
-- create new file `srv/risk-service.cds`
-- insert snippet from "Task 3: Add a Service to the Project"
-- create new file `db/data/riskmanagement-Risks.csv`
-- insert mock data from "Task 4: Provide Mock Data for Service"
-- create new file `db/data/riskmanagement-Mitigations.csv`
-- insert mock data from "Task 4: Provide Mock Data for Service"
+1. Navigate into folder `/broker`
+2. Run command `npm i` in terminal
+3. Run command `npm run init` in terminal
 
-## User Interface and Business Logic
+### Create `.mtaext` file
 
-### Generating a User Interface
+1. Copy file `/config/free-tier-and-trial.mtaext` to `/trial-private.mtaext`
+2. Copy the hashed broker credentials from file `/broker/broker_pwd-private.txt`
 
-- create fiori list report from "Task 1: Generate the UI With an SAP Fiori Elements Template"
-  - set option to adjust mta file
-- create new file `app/common.cds` and fill in the code snippet from "Task 2: Modify the UI With OData Annotations
-- adjust file `app/services.cds` with snippet from same task
-- adjust file `app/risks/annotations.cds` with snippet from same task
+   ```txt
+   Plaintext password:
+   49sdfl4934
+   Hashed credentials:
+   sha256:343535345
+   ```
 
-### Adding Custom Business Logic
+   **Note**: The line after *Hashed credentials* must be copied from first to last character.
 
-- create new file `srv/risk-service.js`
-- fill in snippet from "Task 1: Add Custom Code"
+### Build the `mtar` file
 
-## External Services
+Run command `npm run build` in terminal.
 
-### Adding an External Service
+### Deploy to SAP BTP
 
-- navigate to [Business Partner (A2X)](https://api.sap.com/api/API_BUSINESS_PARTNER/overview)
-- download the EDMX API specification
-- move the file `API_BUSINESS_PARTNER.edmx` onto the folder `srv` to import the external service (**NOTE**: the service must be started with `cds watch`)
-- copy the `api` key and insert into new file `.env` as
+1. Login to Cloud Foundry with `cf l`
+2. Target correct cloud foundry org and space (e.g. `cf t -o <org-name> -s <space-name>`)
+3. Run command `npm run deploy`
 
-```env
-apikey=<api key from api hub>
-```
+## Register API broker after deployment
 
-- adjust the file `db/schema.cds` with the snippet **1b** from "Task 1: Use the External API in the Project
-- adjust the file `srv/risk-service.cds` with the snippet **1d**
-- adjust the `cds.requires` section in the file `package.json` like described under **1h**
-- adjust the file `srv/risk-service.js` like described in **1i**
-- adjust the file `db/schema.cds` with the snippet at **1b** from "Task 3: Consume the External Service in Your UI Application
-- replace the code in file `db/data/riskmanagement-Risks.csv` with snippet at **1d**
-- adjust file `app/common.cds` with changes from snippet at **1b** from "Task 4: Add the Business Partner Field to the UI"
-- adjust file `app/risks/annotations.cds` with snippet at **1c**
-- adjust file `srv/risk-service.js` with snippet at **1f**
-
-## Manual Deployment
-
-### Performing Manual Deployment
-
-- add hana to project with `cds add hana --for production`
-- add uaa to project with `cds add xsuaa --for production`
-- add destination to business partner api to subaccount destination
-- create approuter with `cds add approuter`
-- create new folder `approuter`
-- move files `package.json`, `xs-app.json` from `app` to folder `approuter`
-- delete file `default-env.json` in folder `app`
-
-## Authorization and Trust Management
-
-### Defining CDS Restrictions and Roles
-
-- adjust file `srv/risk-service.cds` with restrictions from "Task 2: Add CAP Role Restrictions to Entities", snippet **1b**
-- adjust file `.cdsrc.json` from "Task 3: Add Users for Local Testing", snippet **1b**
-
-### Setting Up SAP Authorization and Trust Management
-
-- run `cds compile srv --to xsuaa > xs-security.json` to generate scopes and role templates in file `xs-security.json`
-- add role collections to `xs-security.json` file
+See [here](./broker/README.md).

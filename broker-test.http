@@ -1,0 +1,13 @@
+
+# @name token
+
+POST {{$dotenv uaaUrl}}/oauth/token
+Authorization: Basic {{$dotenv uaaClientId}}:{{$dotenv uaaClientSecret}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+
+###
+
+GET {{$dotenv url}}/api/Risks
+Authorization: Bearer {{token.response.body.access_token}}

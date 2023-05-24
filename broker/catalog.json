@@ -1,0 +1,17 @@
+{
+  "services": [
+    {
+      "name": "risk-management-api",
+      "description": "API for Risk Management",
+      "bindable": true,
+      "plans": [
+        {
+          "name": "default",
+          "description": "Standard Plan",
+          "id": "2a01fb01-19c0-4a00-931e-59059ee79444"
+        }
+      ],
+      "id": "5053c814-29fa-410d-a265-1857b7399d97"
+    }
+  ]
+}

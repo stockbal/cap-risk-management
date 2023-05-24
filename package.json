@@ -19,7 +19,7 @@
   "scripts": {
     "start": "cds run",
     "watch": "cds watch",
-    "build": "npx -p mbt mbt build --mtar archive",
+    "build": "npx -p mbt mbt build --mtar archive -e trial-private.mtaext",
     "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
     "watch-risks": "cds watch --open risks/webapp/index.html?sap-ui-xx-viewCache=false#fe-lrop-v4",
     "undeploy": "cf undeploy risk-management --delete-services --delete-service-keys --delete-service-brokers"
@@ -82,6 +82,23 @@
       "auth": {
         "kind": "xsuaa"
       }
+    },
+    "build": {
+      "tasks": [
+        {
+          "for": "hana"
+        },
+        {
+          "for": "nodejs"
+        },
+        {
+          "for": "nodejs",
+          "src": "srv-api",
+          "options": {
+            "model": "srv-api"
+          }
+        }
+      ]
     }
   }
 }

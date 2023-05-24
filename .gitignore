@@ -7,6 +7,10 @@ default-*.json
 gen/
 node_modules/
 target/
+*-private.txt
+*-private.http
+*-private.json
+*-private.mtaext
 
 # Environemt
 .env

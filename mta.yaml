@@ -7,9 +7,13 @@ modules:
   - name: risk-management-srv
     type: nodejs
     path: gen/srv
+    properties:
+      brokerName: ~{risk-management-api-sb-srv/app-name}
+      brokerUrl: ~{risk-management-api-sb-srv/srv-url}
     requires:
       - name: risk-management-auth
       - name: risk-management-db
+      - name: risk-management-api-sb-srv
       - name: risk-management-destination-service
     provides:
       - name: risk-management-srv-api
@@ -19,6 +23,67 @@ modules:
       buildpack: nodejs_buildpack
     build-parameters:
       builder: npm-ci
+
+  # ----------- BROKER MODULE (OSBAPI Implementation) ----------
+  - name: risk-management-api-sb
+    # ------------------------------------------------------------
+    type: nodejs
+    path: broker/
+    build-parameters:
+      builder: npm-ci
+      ignore:
+        ["node_modules/", "default-*.json", "manifest*.yml", "*-private.txt"]
+    parameters:
+      app-name: risk-management-api-sb-${space}
+      memory: 64MB
+      disk-quota: 1024MB
+    properties:
+      SBF_BROKER_CREDENTIALS_HASH: >
+        {
+          "broker-user": "<paste your hash credentials here>"
+        }
+    requires:
+      - name: risk-management-api-uaa
+      - name: risk-management-api-srv-api
+        properties:
+          SBF_SERVICE_CONFIG:
+            risk-management-api:
+              extend_credentials:
+                shared:
+                  apiUrl: ~{srv-url}
+              extend_xssecurity:
+                per_plan:
+                  default:
+                    authorities:
+                      - $XSMASTERAPPNAME.plan_default
+              extend_catalog:
+                metadata:
+                  displayName: Risk Management API ${space}
+          SBF_ENABLE_AUDITLOG: false
+    provides:
+      - name: risk-management-api-sb-srv
+        properties:
+          app-name: ${app-name}
+          srv-url: ${default-url}
+
+  # --------------------- API MODULE ---------------------------
+  - name: risk-management-api-srv
+    # ------------------------------------------------------------
+    type: nodejs
+    path: gen/srv-api
+    parameters:
+      app-name: risk-management-api-srv-${space}
+      memory: 256MB
+      disk-quota: 1024MB
+    build-parameters:
+      builder: npm-ci
+      ignore: ["node_modules/", "default-env.json", "manifest*.yml"]
+    requires:
+      - name: risk-management-api-uaa
+    provides:
+      - name: risk-management-api-srv-api
+        properties:
+          srv-url: ${default-url}
 
   - name: risk-management-approuter
     type: approuter.nodejs
@@ -42,6 +107,8 @@ modules:
       - name: risk-management-db
     parameters:
       buildpack: nodejs_buildpack
+    build-parameters:
+      ignore: ["node_modules/"]
 
   - name: risk-management-app-content
     type: com.sap.application.content
@@ -115,6 +182,20 @@ resources:
       path: ./xs-security.json
       service: xsuaa
       service-plan: application
+
+  # ----------------- XSUAA - BROKER ---------------------------------
+  - name: risk-management-api-uaa
+    # ------------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-name: ${space}-risk-management-api-uaa
+      service-plan: broker
+      xsuaa-app: risk-management-api-${space}
+      config:
+        xsappname: ${xsuaa-app}
+    properties:
+      xsuaa-app: ${xsuaa-app}
 
   - name: risk-management-app-runtime
     type: org.cloudfoundry.managed-service
