@@ -1,6 +1,6 @@
 using {riskmanagement as db} from '../db/schema';
 
-@requires: 'RiskViewer'
+@requires: 'ApiAccess'
 service ApiService {
-  entity Risks as projection on db.Risks;
+  entity Risks as select * from db.Risks;
 }

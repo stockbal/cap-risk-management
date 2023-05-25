@@ -55,7 +55,8 @@ modules:
                 per_plan:
                   default:
                     authorities:
-                      - $XSMASTERAPPNAME.plan_default
+                      # Scope defined in /config/xs-security-api.json
+                      - $XSMASTERAPPNAME.ApiAccess
               extend_catalog:
                 metadata:
                   displayName: Risk Management API ${space}
@@ -188,6 +189,7 @@ resources:
     # ------------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     parameters:
+      path: ./config/xs-security-api.json
       service: xsuaa
       service-name: ${space}-risk-management-api-uaa
       service-plan: broker
