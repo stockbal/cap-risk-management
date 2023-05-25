@@ -81,6 +81,7 @@ modules:
       ignore: ["node_modules/", "default-env.json", "manifest*.yml"]
     requires:
       - name: risk-management-api-uaa
+      - name: risk-management-db
     provides:
       - name: risk-management-api-srv-api
         properties:
