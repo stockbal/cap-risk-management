@@ -89,6 +89,14 @@
           "for": "hana"
         },
         {
+          "for": "hana",
+          "src": "srv-api",
+          "dest": "db",
+          "options": {
+            "model": "srv-api"
+          }
+        },
+        {
           "for": "nodejs"
         },
         {
