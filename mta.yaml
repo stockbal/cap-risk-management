@@ -179,7 +179,7 @@ resources:
   - name: risk-management-auth
     type: org.cloudfoundry.managed-service
     parameters:
-      path: ./xs-security.json
+      path: ./config/xs-security.json
       service: xsuaa
       service-plan: application
 
