@@ -1,24 +1,35 @@
-specVersion: '2.4'
+specVersion: "2.4"
 metadata:
-  name: 'risks'
+  name: "risks"
 type: application
 server:
   customMiddleware:
-  - name: fiori-tools-proxy
-    afterMiddleware: compression
-    configuration:
-      ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
-      backend:
-      - path: /service
-        url: http://localhost:4004
-      ui5:
-        path: 
-        - /resources
-        - /test-resources
-        url: https://ui5.sap.com
-  - name: fiori-tools-appreload
-    afterMiddleware: compression
-    configuration:
-     port: 35729
-     path: webapp
-     delay: 300
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        # backend:
+        # - path: /service
+        #   url: http://localhost:1091
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: ui5-middleware-cfdestination
+      afterMiddleware: compression
+      configuration:
+        authenticationMethod: "route"
+        allowServices: true # allows BTP services like SAP IoT to be used
+        debug: true
+        xsappJson: "local-xs-app.json"
+        destinations:
+          # check that the destination name (here: "backend") matches your router in xs-app.json
+          - name: "risk-management-srv-api"
+            url: "https://c7c17a4dtrial-dev-risk-management-srv.cfapps.us10-001.hana.ondemand.com/"
