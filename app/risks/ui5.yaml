@@ -33,3 +33,4 @@ server:
           # check that the destination name (here: "backend") matches your router in xs-app.json
           - name: "risk-management-srv-api"
             url: "https://c7c17a4dtrial-dev-risk-management-srv.cfapps.us10-001.hana.ondemand.com/"
+            forwardAuthToken: true
