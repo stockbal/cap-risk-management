@@ -1,9 +1,0 @@
-{
-  "tenant-mode": "dedicated",
-  "scopes": [
-    {
-      "name": "$XSAPPNAME.ApiAccess",
-      "description": "Access to Riskmanagement API"
-    }
-  ]
-}

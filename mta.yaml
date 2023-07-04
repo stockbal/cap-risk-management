@@ -178,25 +178,59 @@ modules:
       no-source: true
 
 resources:
+  # --------------------- XSUAA - Main Service ------------------------
   - name: risk-management-auth
+    # -----------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     parameters:
-      path: ./config/xs-security.json
       service: xsuaa
       service-plan: application
+      config:
+        tenant-mode: dedicated
+        xsappname: risk-management
+        scopes:
+          - name: $XSAPPNAME.RiskViewer
+            description: RiskViewer
+            grant-as-authority-to-apps:
+              - $XSAPPNAME(broker, risk-management-api-${space})
+          - name: $XSAPPNAME.RiskManager
+            description: RiskManager
+        role-templates:
+          - name: RiskViewer
+            description: generated
+            scope-references:
+              - $XSAPPNAME.RiskViewer
+          - name: RiskManager
+            description: generated
+            scope-references:
+              - $XSAPPNAME.RiskManager
+        role-collections:
+          - name: RiskManager
+            description: Manage Risks
+            role-template-references:
+              - $XSAPPNAME.RiskManager
+          - name: RiskViewer
+            description: View Risks
+            role-template-references:
+              - $XSAPPNAME.RiskViewer
 
   # ----------------- XSUAA - BROKER ---------------------------------
   - name: risk-management-api-uaa
-    # ------------------------------------------------------------------
+    # ----------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     parameters:
-      path: ./config/xs-security-api.json
       service: xsuaa
       service-name: ${space}-risk-management-api-uaa
       service-plan: broker
       xsuaa-app: risk-management-api-${space}
       config:
+        tenant-mode: dedicated
         xsappname: ${xsuaa-app}
+        scopes:
+          - name: $XSAPPNAME.ApiAccess
+            description: Access to Riskmanagement API
+        authorities:
+          - $XSAPPNAME(application,risk-management).RiskViewer
     properties:
       xsuaa-app: ${xsuaa-app}
 
