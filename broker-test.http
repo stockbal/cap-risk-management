@@ -2,7 +2,7 @@
 # @name token
 
 POST {{$dotenv uaaUrl}}/oauth/token
-Authorization: Basic {{$dotenv uaaClientId}}:{{$dotenv uaaClientSecret}}
+Authorization: Basic {{$dotenv uaaClientId_api}}:{{$dotenv uaaClientSecret_api}}
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=client_credentials
@@ -10,4 +10,9 @@ grant_type=client_credentials
 ###
 
 GET {{$dotenv url}}/api/Risks
+Authorization: Bearer {{token.response.body.access_token}}
+
+###
+
+GET {{$dotenv appUrl}}/service/risk/Risks
 Authorization: Bearer {{token.response.body.access_token}}
