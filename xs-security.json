@@ -16,13 +16,17 @@
     {
       "name": "RiskViewer",
       "description": "generated",
-      "scope-references": ["$XSAPPNAME.RiskViewer"],
+      "scope-references": [
+        "$XSAPPNAME.RiskViewer"
+      ],
       "attribute-references": []
     },
     {
       "name": "RiskManager",
       "description": "generated",
-      "scope-references": ["$XSAPPNAME.RiskManager"],
+      "scope-references": [
+        "$XSAPPNAME.RiskManager"
+      ],
       "attribute-references": []
     }
   ],
@@ -30,12 +34,21 @@
     {
       "name": "RiskManager",
       "description": "Manage Risks",
-      "role-template-references": ["$XSAPPNAME.RiskManager"]
+      "role-template-references": [
+        "$XSAPPNAME.RiskManager"
+      ]
     },
     {
       "name": "RiskViewer",
       "description": "View Risks",
-      "role-template-references": ["$XSAPPNAME.RiskViewer"]
+      "role-template-references": [
+        "$XSAPPNAME.RiskViewer"
+      ]
     }
-  ]
+  ],
+  "oauth2-configuration": {
+    "redirect-uris": [
+      "https://*.cfapps.*.hana.ondemand.com/**"
+    ]
+  }
 }

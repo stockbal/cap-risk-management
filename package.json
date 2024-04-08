@@ -6,20 +6,25 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@sap/cds": "^5",
+    "@sap-cloud-sdk/connectivity": "^3.13.0",
+    "@sap-cloud-sdk/http-client": "^3.13.0",
+    "@sap-cloud-sdk/resilience": "^3.13.0",
+    "@sap/cds": "^7",
     "@sap/xssec": "^3",
     "express": "^4",
-    "hdb": "^0.19.0",
+    "hdb": "^0.19.8",
     "passport": "^0"
   },
   "devDependencies": {
-    "@sap/ux-specification": "^1.100.4",
-    "sqlite3": "^5.0.2"
+    "@cap-js/sqlite": "^1.6.0",
+    "@sap/cds-dk": "^7.8.1",
+    "@sap/ux-specification": "^1.120.7",
+    "rimraf": "^5.0.5"
   },
   "scripts": {
-    "start": "cds run",
+    "start": "cds-serve",
     "watch": "cds watch",
-    "build": "npx -p mbt mbt build --mtar archive",
+    "build": "rimraf gen resources mta_archives && npx -p mbt mbt build --mtar archive",
     "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
     "watch-risks": "cds watch --open risks/webapp/index.html?sap-ui-xx-viewCache=false#fe-lrop-v4",
     "undeploy": "cf undeploy risk-management --delete-services --delete-service-keys --delete-service-brokers"
@@ -80,8 +85,10 @@
         }
       },
       "auth": {
-        "kind": "xsuaa"
-      }
+        "kind": "dummy"
+      },
+      "connectivity": true,
+      "destinations": true
     }
   }
 }

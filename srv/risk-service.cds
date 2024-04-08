@@ -3,29 +3,29 @@ using {riskmanagement as rm} from '../db/schema';
 /**
  * For serving end users
  */
-service RiskService @(path : 'service/risk') {
-    entity Risks @(restrict : [
+service RiskService {
+    entity Risks @(restrict: [
         {
 
-            grant : ['READ'],
-            to    : ['RiskViewer']
+            grant: ['READ'],
+            to   : ['RiskViewer']
         },
         {
-            grant : ['*'],
-            to    : ['RiskManager']
+            grant: ['*'],
+            to   : ['RiskManager']
         }
     ])                      as projection on rm.Risks;
 
     annotate Risks with @odata.draft.enabled;
 
-    entity Mitigations @(restrict : [
+    entity Mitigations @(restrict: [
         {
-            grant : ['READ'],
-            to    : ['RiskViewer']
+            grant: ['READ'],
+            to   : ['RiskViewer']
         },
         {
-            grant : ['*'],
-            to    : ['RiskManager']
+            grant: ['*'],
+            to   : ['RiskManager']
         }
     ])                      as projection on rm.Mitigations;
 

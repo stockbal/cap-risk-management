@@ -3,6 +3,16 @@ ID: risk-management
 description: A simple CAP project.
 version: 1.0.0
 
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx -p @sap/cds-dk cds build --production
+
 modules:
   - name: risk-management-srv
     type: nodejs
@@ -17,6 +27,7 @@ modules:
           srv-url: ${default-url}
     parameters:
       buildpack: nodejs_buildpack
+      memory: 256M
     build-parameters:
       builder: npm-ci
 
@@ -152,13 +163,3 @@ resources:
       service: destination
       service-name: risk-management-destination-service
       service-plan: lite
-
-parameters:
-  deploy_mode: html5-repo
-  enable-parallel-deployments: true
-
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - npx -p @sap/cds-dk cds build --production
