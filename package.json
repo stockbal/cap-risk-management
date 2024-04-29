@@ -10,10 +10,9 @@
     "@sap-cloud-sdk/http-client": "^3.13.0",
     "@sap-cloud-sdk/resilience": "^3.13.0",
     "@sap/cds": "^7",
+    "@sap/cds-hana": "^2",
     "@sap/xssec": "^3",
-    "express": "^4",
-    "hdb": "^0.19.8",
-    "passport": "^0"
+    "express": "^4"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1.6.0",
@@ -74,15 +73,11 @@
         }
       },
       "[production]": {
-        "db": {
-          "kind": "hana-cloud"
-        },
-        "auth": {
-          "kind": "xsuaa"
-        },
         "approuter": {
           "kind": "cloudfoundry"
-        }
+        },
+        "auth": "xsuaa",
+        "db": "hana"
       },
       "auth": {
         "kind": "dummy"
