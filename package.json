@@ -6,19 +6,19 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@sap-cloud-sdk/connectivity": "^3.13.0",
-    "@sap-cloud-sdk/http-client": "^3.13.0",
-    "@sap-cloud-sdk/resilience": "^3.13.0",
+    "@sap-cloud-sdk/connectivity": "^3.15.0",
+    "@sap-cloud-sdk/http-client": "^3.15.0",
+    "@sap-cloud-sdk/resilience": "^3.15.0",
     "@sap/cds": "^7",
     "@sap/cds-hana": "^2",
     "@sap/xssec": "^3",
     "express": "^4"
   },
   "devDependencies": {
-    "@cap-js/sqlite": "^1.6.0",
-    "@sap/cds-dk": "^7.8.1",
-    "@sap/ux-specification": "^1.120.7",
-    "rimraf": "^5.0.5"
+    "@cap-js/sqlite": "^1.7.1",
+    "@sap/cds-dk": "^7.9.2",
+    "@sap/ux-specification": "^1.120.11",
+    "rimraf": "^5.0.7"
   },
   "scripts": {
     "start": "cds-serve",
@@ -79,9 +79,7 @@
         "auth": "xsuaa",
         "db": "hana"
       },
-      "auth": {
-        "kind": "dummy"
-      },
+      "auth": "xsuaa",
       "connectivity": true,
       "destinations": true
     }
