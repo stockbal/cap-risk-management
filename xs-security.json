@@ -47,6 +47,7 @@
     }
   ],
   "oauth2-configuration": {
+    "credential-types": ["binding-secret"],
     "redirect-uris": [
       "https://*.cfapps.*.hana.ondemand.com/**"
     ]
